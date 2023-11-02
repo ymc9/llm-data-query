@@ -1,5 +1,5 @@
 {
-  "name": "llm-data-query",
+  "name": "llm-data-query-6310",
   "private": true,
   "sideEffects": false,
   "scripts": {
@@ -7,7 +7,6 @@
     "dev": "remix dev -c \"npm run dev:serve\"",
     "dev:serve": "binode --require ./mocks -- @remix-run/serve:remix-serve ./build/index.js",
     "format": "prettier --write .",
-    "format:repo": "npm run format && npm run lint -- --fix",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "start": "remix-serve ./build/index.js",
