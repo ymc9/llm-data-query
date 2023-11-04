@@ -38,19 +38,13 @@ export async function verifyLogin(
 ) {
   const userWithPassword = await prisma.user.findUnique({
     where: { email },
-    include: {
-      password: true,
-    },
   });
 
   if (!userWithPassword || !userWithPassword.password) {
     return null;
   }
 
-  const isValid = await bcrypt.compare(
-    password,
-    userWithPassword.password.hash,
-  );
+  const isValid = await bcrypt.compare(password, userWithPassword.password);
 
   if (!isValid) {
     return null;

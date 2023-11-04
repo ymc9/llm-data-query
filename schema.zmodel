@@ -1,0 +1,70 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  region String
+}
+
+
+model Product {
+  id String @id @default(cuid())
+  name String
+  category String
+  price Float
+  orderItems OrderItem[]
+
+  // 🔐 login is required to read products
+  @@allow('read', auth() != null)
+}
+
+model Order {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items OrderItem[]
+  region String
+
+  // 🔐 analysts can only read orders of their assigned region
+  @@allow('read', auth().region == region)
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  quantity Int
+  productId String
+  orderId String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // 🔐 analysts can only read order items of their assigned region
+  @@allow('read', auth().region == order.region)
+}
+
+view OrderItemDetail {
+  id String @id
+  createdAt DateTime
+  updatedAt DateTime
+  region String
+  product String
+  category String
+  unitPrice Float
+  quantity Int
+  subtotal Float
+
+  // 🔐 analysts can only read order details of their assigned region
+  @@allow('read', auth().region == region)
+}
